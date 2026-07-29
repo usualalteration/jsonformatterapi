@@ -1,5 +1,12 @@
 [
   {
+    "sessionId": "019fab39-4f24-760c-8b0e-831fcc48c57e",
+    "agentId": "pi",
+    "cwd": "/home/nicoletta.guest/workbench/jsonformatterapi",
+    "createdAt": "2026-07-29T00:14:52.323Z",
+    "updatedAt": "2026-07-29T00:14:52.323Z"
+  },
+  {
     "sessionId": "019fab26-d94e-7d54-9c18-d2dc9880d3ef",
     "agentId": "pi",
     "cwd": "/home/nicoletta.guest/workbench/jsonformatterapi",
