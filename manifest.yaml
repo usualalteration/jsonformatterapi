@@ -1,0 +1,37 @@
+# Manifest dichiarativo per il package "json-tools" (riferimento).
+#
+# In questo workbench Trustable la fase di deploy e' gestita dal watcher
+# gestito (`ops ide devel`) e dagli strumenti MCP OpenServerless
+# (`openserverless_action_new`): le azioni vengono create come web action
+# pubbliche (`--web true`, equivalente all'annotazione `web-export: true`) e
+# l'artefatto `__main__.py` e' generato automaticamente. Questo file e' una
+# descrizione dichiarativa della topologia delle azioni, utile come sorgente
+# di verita' e per eventuali ambienti OpenWhisk/OpenServerless esterni.
+#
+# Nota sulla denominazione: i segmenti di package/azione in OpenServerless
+# devono iniziare con una lettera e contenere solo lettere, numeri e trattini.
+# Per questo motivo i nomi usano il trattino (validate-json, format-json,
+# minify-json) e non l'underscore: `validate_json` / `format_json` / ecc.
+# non sono endpoint validi sulla piattaforma.
+
+packages:
+  json-tools:
+    actions:
+      validate-json:
+        function: packages/json-tools/validate-json/validate_json.py
+        runtime: python:3
+        web: true                # web-export: true -> endpoint REST pubblico
+        annotations:
+          web-export: true
+      format-json:
+        function: packages/json-tools/format-json/format_json.py
+        runtime: python:3
+        web: true
+        annotations:
+          web-export: true
+      minify-json:
+        function: packages/json-tools/minify-json/minify_json.py
+        runtime: python:3
+        web: true
+        annotations:
+          web-export: true
