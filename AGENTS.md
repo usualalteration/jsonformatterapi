@@ -12,10 +12,12 @@ Authoritative Trustable instruction sources:
 3. `.mcp.json` for the credential-free MCP server names and launch descriptors
    generated for this workbench.
 
-There is no project-local `opencode.md`. `CLAUDE.md` mirrors the same managed
-guidance for Claude-compatible agents and is not an independent authority.
+There is no project-local `opencode.md`. `CLAUDE.md` is a symlink to this
+`AGENTS.md` and `.claude` is a symlink to `.agents`, so Pi, Codex, and Claude
+Code read the same instructions and the same skills. Editing either name edits
+the same file; there is no second copy to keep in sync.
 
-Ignore `CLAUDE.md`, `CONTEXT.md`, `.cursorrules`, `.cursor/rules/*`,
+Ignore `CONTEXT.md`, `.cursorrules`, `.cursor/rules/*`,
 `.github/copilot-instructions.md`, and generated `rules.md` files as mandatory
 agent instructions. Treat them only as legacy/template notes when the user
 explicitly asks to inspect them, and never let them override the Trustable
@@ -51,7 +53,7 @@ plugin, relaunch the app before relying on
 The always-present `react` server is the deterministic, read-only source
 validator for React/Vite code. After changing `src/`, call
 `react_project_inspect` when project shape is uncertain and then call
-`react_validate`. Resolve every error finding before Browser MCP verification.
+`react_validate`. Resolve every error finding before declaring the change done.
 `agentireact` remains optional selection context and does not replace this
 validation.
 
@@ -84,18 +86,16 @@ progress.
 
 Pi has no Trustable session-enforcement or completion plugin. After compaction,
 re-read the active user request and relevant project files before continuing;
-do not call legacy `trustable_*` tools. For reported browser bugs, reproduce the
-exact symptom with the browser MCP before editing when the browser is available.
-After source changes, run the fixed user-visible flow again. Sound fixes must
-show active audio state.
+do not call legacy `trustable_*` tools. For reported bugs, reproduce the exact
+symptom with bounded HTTP, log, or deterministic checks before editing. After
+source changes, verify the fixed flow again with those same checks.
 
 For any frontend change, run the deterministic `react_validate` MCP tool, then
 the project typecheck and build when they are available. Resolve its route,
-authentication, accessibility, and TypeScript errors before opening the exact
-changed route with the Browser MCP. Inspect page diagnostics and exercise the
-visible flow. Repeat both React validation and browser verification after later
-frontend mutations. Do not clear caches or reinstall dependencies unless the
-failure specifically indicates stale or missing dependencies.
+authentication, accessibility, and TypeScript errors, then confirm the exact
+changed route responds with a bounded HTTP check. Repeat that validation after
+later frontend mutations. Do not clear caches or reinstall dependencies unless
+the failure specifically indicates stale or missing dependencies.
 
 In a live Trustable Edit session, the existing `ops ide devel` watcher is the
 sole owner of action packaging and deployment. After a coherent action change,
@@ -121,11 +121,10 @@ with `|| true`, `|| echo`, or `head`/`tail` pipelines.
 Never kill Trustable-managed processes or start `vite`, `npm run dev`, or
 `ops ide devel`; diagnose the existing `http://localhost:5173` server.
 
-Use the generated browser MCP to reproduce frontend behavior instead of
-guessing from source alone. `browser_open` in `development` mode targets only
-the Trustable-managed `http://localhost:5173`. Use `deployed` mode only after
-the managed watcher has deployed the current sources, for the derived
-`vite.<domain>` ingress check.
+Reproduce frontend behavior against the Trustable-managed
+`http://localhost:5173` instead of guessing from source alone. Check the
+derived `vite.<domain>` ingress only after the managed watcher has deployed the
+current sources.
 
 When the app uses React Router `HashRouter`, use `Link`, `NavLink`, `Navigate`,
 or `useNavigate` with logical paths such as `/login`. React Router adds the hash
@@ -133,12 +132,9 @@ itself: never pass `#/login` to a router API, and never use root-relative `<a
 href="/login">` anchors for internal navigation.
 
 Give form controls stable `id` and `name` attributes and associate labels with
-matching `htmlFor`. Repeated placeholders are not semantic labels. If
-`browser_interact` reports an ambiguous locator, fix the form semantics when
-appropriate, use a `ref` from the latest browser snapshot, or pass its explicit
-zero-based `index`; do not bypass a failed UI flow with direct API calls and
-call it verified. For sound, verify after a user gesture that browser evidence
-reports a running AudioContext or active unmuted media.
+matching `htmlFor`. Repeated placeholders are not semantic labels: ambiguous or
+duplicated control identity is a form-semantics bug, so fix it at the source
+rather than working around it.
 
 Successful registration establishes an authenticated session immediately,
 using the same token/session/user contract as login. Do not require the user to
@@ -285,14 +281,10 @@ the relevant project files before resuming. Pi has no Trustable recovery gate
 or `trustable_context_recover` tool.
 
 When the user reports a bug or says a previous fix still does not work,
-reproduce the exact symptom before editing. Use `browser_interact` for browser
-bugs when the browser MCP is available; use bounded HTTP, log, or deterministic
-tests for non-browser failures. If the same check fails repeatedly, stop
-repeating it, inspect the new evidence, and change the diagnosis before another
-source edit.
-When the symptom was reproduced in the browser, exercise the fixed flow again
-with `browser_interact` after the last source change; sound fixes must show
-active audio state. Backend-only checks do not verify a browser-visible flow.
+reproduce the exact symptom before editing. Use bounded HTTP, log, or
+deterministic tests to reproduce the failure. If the same check fails
+repeatedly, stop repeating it, inspect the new evidence, and change the
+diagnosis before another source edit.
 Protected views that load identity asynchronously must keep a distinct loading
 state; do not redirect merely because the initial user/profile value is null.
 
@@ -303,12 +295,10 @@ tool.
 
 For frontend work, run the project typecheck before the build after each
 coherent edit batch. A successful Vite build does not prove that every JSX
-symbol is defined. After the first successful build or deploy, immediately open
-the exact changed route with the Browser MCP, inspect the rendered page and
-diagnostics, and exercise the visible flow before more speculative edits. Do
-not clear caches or reinstall dependencies unless the observed failure points
-to dependency state. Repeat the browser verification after later frontend
-source changes.
+symbol is defined. Use `react_validate` and bounded HTTP checks against the
+changed route to confirm it renders before more speculative edits. Do not clear
+caches or reinstall dependencies unless the observed failure points to
+dependency state.
 
 ## Non-Negotiable Rules
 
@@ -403,13 +393,11 @@ source changes.
 7. Validate with bounded checks against the real public endpoint and
    browser-visible app host.
 
-For frontend behavior, use the generated bounded browser MCP before declaring
-a UI bug fixed. Start with `browser_open` in `development` mode, which targets
-the Trustable-managed `http://localhost:5173`, then inspect URL, accessibility
-snapshot, console, and network diagnostics. Use `browser_interact` to reproduce
-the exact click/form/reload flow. Use `deployed` mode only after the managed
-watcher has deployed the current sources and only when external
-`vite.<domain>` ingress behavior is in scope. Do not start another Vite server.
+For frontend behavior, validate against the Trustable-managed
+`http://localhost:5173` with `react_validate` and bounded HTTP checks before
+declaring a UI bug fixed. Check the external `vite.<domain>` ingress only after
+the managed watcher has deployed the current sources and only when that
+ingress behavior is in scope. Do not start another Vite server.
 
 Use this execution loop for backend work:
 
@@ -542,7 +530,7 @@ connection details.
 - `react`: always present; read-only deterministic source validation for the
   current React/Vite workbench. Use `react_project_inspect`,
   `react_validate_routes`, `react_validate_auth_flow`, and the aggregate
-  `react_validate`. Resolve errors before Browser MCP verification.
+  `react_validate`. Resolve errors before declaring the change done.
 - `agentireact`: present only when `vite.config.js` or `vite.config.ts`
   imports/references `@agentic-react/vite` and invokes `AgenticReact()` in
   executable config code; HTTP MCP at `http://localhost:5173/mcp`. Comments,
@@ -983,16 +971,9 @@ When an app has login or registration:
   generated Redis wiring and use `ctx.REDIS_PREFIX`; JWT and application
   signing secrets are not an alternative.
 - Give every form control a stable `id` and `name`, and associate each label
-  with `htmlFor` matching that `id`. A placeholder is not a label. When a
-  browser locator matches multiple controls, fix missing form semantics when
-  appropriate, use a `ref` from the latest browser snapshot, or pass the
-  browser MCP's explicit zero-based `index`; never
-  bypass the rendered registration/login flow with `curl` and claim the browser
-  flow passed.
-- For audio behavior, verification requires browser evidence after the user
-  gesture. Confirm that the browser snapshot/diagnostics reports a running
-  AudioContext or active unmuted media; source inspection and a visible music
-  toggle are not proof that sound is produced.
+  with `htmlFor` matching that `id`. A placeholder is not a label. Ambiguous or
+  duplicated control identity is a form-semantics bug: fix it at the source
+  rather than working around it.
 - Do not hardcode browser-visible identity such as `user_id=1` in fetch URLs or
   request bodies. The backend must derive the current user from authenticated
   request state, such as a token/session header, not from a user id supplied by
